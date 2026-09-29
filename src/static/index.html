@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Termsheet.ai</title>
+    <style>
+        body { font-family: -apple-system, system-ui, sans-serif; background: #0a0a0f; color: #f0f0ff; margin: 0; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .card { background: #111118; border: 1px solid #2a2a38; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        h1, h2 { color: #818cf8; }
+        button { background: #6366f1; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #818cf8; }
+        .obs-card { background: rgba(99, 102, 241, 0.1); border-left: 4px solid #6366f1; padding: 15px; margin: 10px 0; }
+        pre { background: #1a1a24; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Termsheet.ai</h1>
+        <div class="card">
+            <h2>Select Vendor</h2>
+            <select id="vendorSelect">
+                <option value="CloudForge">CloudForge</option>
+                <option value="MetricFlow">MetricFlow</option>
+            </select>
+            <button onclick="loadProfile()">Load Intelligence</button>
+        </div>
+        
+        <div id="profile" class="card" style="display:none;">
+            <h2>Vendor Profile: <span id="vName"></span></h2>
+            <div id="observations"></div>
+            
+            <h3>Generate Strategy</h3>
+            <input type="text" id="offer" placeholder="Enter current quote (e.g. $120k)" style="width: 300px; padding: 5px;">
+            <label><input type="checkbox" id="useMemory" checked> Use Hindsight Memory</label>
+            <button onclick="getStrategy()">Get Strategy</button>
+            
+            <div id="strategyResult" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+
+    <script>
+        async function loadProfile() {
+            const vendor = document.getElementById('vendorSelect').value;
+            const res = await fetch(`/api/vendor/${vendor}/profile`);
+            const data = await res.json();
+            
+            document.getElementById('profile').style.display = 'block';
+            document.getElementById('vName').innerText = data.vendor;
+            
+            let obsHtml = '<h3>Hindsight Observations</h3>';
+            if (data.observations.length > 0) {
+                data.observations.forEach(o => {
+                    obsHtml += `<div class="obs-card">
+                        <strong>Insight:</strong> ${o.content} <br>
+                        <em>Confidence: ${(o.confidence * 100).toFixed(0)}% (Based on ${o.evidence_count} events)</em>
+                    </div>`;
+                });
+            } else {
+                obsHtml += '<p>No observations available. Insufficient memory.</p>';
+            }
+            document.getElementById('observations').innerHTML = obsHtml;
+            document.getElementById('strategyResult').innerHTML = '';
+        }
+
+        async function getStrategy() {
+            const vendor = document.getElementById('vendorSelect').value;
+            const offer = document.getElementById('offer').value;
+            const useMemory = document.getElementById('useMemory').checked;
+            
+            const res = await fetch(`/api/strategy`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ vendor, current_offer: offer, use_memory: useMemory })
+            });
+            const data = await res.json();
+            
+            let html = `<h3>Strategy (${data.mode} Mode)</h3>
+                <p><strong>Recommendation:</strong> ${data.recommendation}</p>
+                <p><strong>Reasoning:</strong> ${data.reasoning}</p>`;
+                
+            if (data.evidence.length > 0) {
+                html += `<h4>Supporting Evidence:</h4><pre>${JSON.stringify(data.evidence, null, 2)}</pre>`;
+            }
+            
+            document.getElementById('strategyResult').innerHTML = html;
+        }
+    </script>
+</body>
+</html>
