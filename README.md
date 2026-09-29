@@ -1,20 +1,73 @@
-# Termsheet.ai
+# Termsheet.ai ⚡
 
-**Problem:** Procurement teams lose historical context of vendor negotiation tactics across multi-year renewals.
-**Solution:** Termsheet.ai utilizes Vectorize Hindsight memory to build a longitudinal behavior profile on vendors.
+> **AI Agent for Longitudinal Vendor Intelligence & Procurement Decisions**
 
-### Architecture
-- **Frontend:** Vanilla HTML/JS styled natively for zero-friction hackathon demos.
-- **Backend:** FastAPI for high-performance python API serving.
-- **Memory:** Simulated Hindsight memory service implementing `retain`, `recall`, and `reflect`.
+Termsheet.ai is an AI-powered procurement agent designed to preserve and reason over historical vendor interactions, negotiation patterns, pricing behavior, and renewal decisions.
 
-### Run it
-1. `pip install fastapi uvicorn pydantic`
-2. `python -m uvicorn src.main:app --port 8000`
-3. Visit `http://localhost:8000/static/index.html`
+Instead of treating every procurement cycle as a new conversation, Termsheet.ai builds a **longitudinal memory of vendor behavior** and uses that context to help procurement teams make better decisions.
 
-### Tests
-- **API Tests:** Run `pytest tests/` (Requires `pytest`, `httpx`).
-- **E2E Tests:** Run `node tests/playwright_test.js` (Requires `playwright`).
+---
 
-*Disclaimer: This project uses synthetic negotiation data for demonstration purposes.*
+## 🎯 Problem
+
+Procurement teams often lose critical institutional knowledge when:
+
+- Vendor negotiations span multiple years
+- Procurement employees change roles
+- Previous concessions are forgotten
+- Vendor pricing patterns are not tracked
+- Negotiation tactics are scattered across documents and conversations
+
+This creates an **organizational memory problem**.
+
+### Our Solution
+
+Termsheet.ai acts as an **AI procurement intelligence agent** that:
+
+1. Captures historical vendor interactions
+2. Stores relevant information in long-term memory
+3. Recalls previous negotiations during new procurement cycles
+4. Identifies recurring vendor behavior
+5. Reflects on historical outcomes
+6. Provides context-aware negotiation intelligence
+
+---
+
+# 🧠 Agent Architecture
+
+```text
+                    ┌─────────────────────┐
+                    │    Procurement User │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │    Agent Interface  │
+                    │      HTML / JS      │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │     FastAPI API     │
+                    │  Agent Orchestrator │
+                    └──────────┬──────────┘
+                               │
+              ┌────────────────┼────────────────┐
+              │                │                │
+              ▼                ▼                ▼
+        ┌───────────┐    ┌───────────┐    ┌───────────┐
+        │  Retain   │    │  Recall   │    │  Reflect  │
+        │  Memory   │    │  Memory   │    │  Memory   │
+        └───────────┘    └───────────┘    └───────────┘
+              │                │                │
+              └────────────────┼────────────────┘
+                               ▼
+                    ┌─────────────────────┐
+                    │ Vendor Behavior     │
+                    │ Intelligence Layer  │
+                    └──────────┬──────────┘
+                               ▼
+                    ┌─────────────────────┐
+                    │ Contextual Agent    │
+                    │ Recommendation      │
+                    └─────────────────────┘
